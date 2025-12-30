@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+
+    <!-- Важно: C# 8.0 + отключаем implicit usings, чтобы не было ошибок -->
+    <LangVersion>8.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Обязательно оставить x64 -->
+    <PlatformTarget>x64</PlatformTarget>
+
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- NuGet пакеты -->
+  <ItemGroup>
+    <PackageReference Include="EasyModbusTCP" Version="5.6.0" />
+  </ItemGroup>
+
+  <!-- Ссылки на DLL из папки lib -->
+  <ItemGroup>
+    <Reference Include="MvCodeReaderSDK.Net">
+      <HintPath>lib\MvCodeReaderSDK.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="MvCodeReaderCtrl">
+      <HintPath>lib\MvCodeReaderCtrl.dll</HintPath>
+    </Reference>
+    <Reference Include="MvCodeReaderCtrlWrapper">
+      <HintPath>lib\MvCodeReaderCtrlWrapper.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Копирование всех файлов из lib в bin -->
+  <ItemGroup>
+    <None Update="lib\**\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

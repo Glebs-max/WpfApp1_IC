@@ -1,0 +1,24 @@
+﻿<Window x:Class="WpfApp1_IC.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1_IC"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!-- Левая панель с кнопками -->
+        <Border Grid.Column="0" Background="#EEE" Padding="10">
+            <StackPanel>
+                <Button Content="Камера - базовый режим" Margin="0,0,0,10" Click="CameraBasic_Click"/>
+                <Button Content="Камера - расширенный режим" Margin="0,0,0,10" Click="CameraAdvanced_Click"/>
+            </StackPanel>
+        </Border>
+        <!-- Правая часть — место для страниц -->
+        <Frame x:Name="MainFrame" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window>
