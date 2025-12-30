@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MvCodeReaderSDKNet;
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using MvCodeReaderSDKNet;
-
 
 namespace WpfApp1_IC.Services
 {
@@ -49,7 +46,7 @@ namespace WpfApp1_IC.Services
             _reader.MV_CODEREADER_StartGrabbing_NET();
         }
 
-        public ( DataMatrixResult dm, BitmapSource frame) TriggerAndRead()
+        public (DataMatrixResult dm, BitmapSource frame) TriggerAndRead()
         {
             if (_reader == null)
                 throw new InvalidOperationException("Camera not initialized");
@@ -68,10 +65,13 @@ namespace WpfApp1_IC.Services
 
                 info = Marshal.PtrToStructure<MvCodeReader.MV_CODEREADER_IMAGE_OUT_INFO>(pInfo);
 
+                System.Diagnostics.Debug.WriteLine("PixelFormat: " + info.enPixelType);
+
                 BitmapSource frame = GetLastFrameBitmap(pData, info);
 
                 if (!info.bIsGetCode || info.chResult == null)
                     return (null, frame);
+
                 var dm = ExtractDM(info.chResult);
                 return (dm, frame);
             }
@@ -104,15 +104,27 @@ namespace WpfApp1_IC.Services
         // получение Raw кадра 
         public BitmapSource GetLastFrameBitmap(IntPtr pData, MvCodeReader.MV_CODEREADER_IMAGE_OUT_INFO info)
         {
-            int width = (int)info.nWidth;
-            int height = (int)info.nHeight;
+            // JPEG поток
+            int jpegSize = (int)info.nFrameLen;
+            byte[] jpegData = new byte[jpegSize];
 
-            int stride = width;
+            // копируем JPEG из unmanaged памяти
+            Marshal.Copy(pData, jpegData, 0, jpegSize);
 
-            return BitmapSource.Create(width, height, 96, 96,
-                                        PixelFormats.Gray8, null,
-                                        pData, stride * height, stride);
+            // декодируем JPEG
+            using (var ms = new MemoryStream(jpegData))
+            {
+                var decoder = new JpegBitmapDecoder(
+                    ms,
+                    BitmapCreateOptions.PreservePixelFormat,
+                    BitmapCacheOption.OnLoad);
+
+                BitmapSource bmp = decoder.Frames[0];
+                bmp.Freeze(); // обязательно
+                return bmp;
+            }
         }
+
 
         public void Dispose()
         {
@@ -126,4 +138,3 @@ namespace WpfApp1_IC.Services
         }
     }
 }
-

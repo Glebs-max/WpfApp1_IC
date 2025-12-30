@@ -27,10 +27,12 @@ namespace WpfApp1_IC.Pages
 
                 _controller = new InspectorController(modbus, camera);
 
+                // Подписки
                 _controller.SignalChanged += OnSignalChanged;
                 _controller.DataMatrixRead += OnDataMatrixRead;
                 _controller.ErrorOccurred += OnErrorOccurred;
 
+                // Обновление строки DM
                 _controller.DataMatrixRead += dm =>
                 {
                     Dispatcher.Invoke(() =>
@@ -39,15 +41,15 @@ namespace WpfApp1_IC.Pages
                     });
                 };
 
+                // Обновление изображения
                 _controller.FrameReceived += frame =>
                 {
                     Dispatcher.Invoke(() =>
                     {
-
                         if (frame != null)
                         {
                             CameraImage.Source = frame;
-                            AppendLog("✅ Изображение обновлено");
+                            AppendLog("Кадр обновлён");
                         }
                         else
                         {
@@ -72,7 +74,6 @@ namespace WpfApp1_IC.Pages
                 _controller.SignalChanged -= OnSignalChanged;
                 _controller.DataMatrixRead -= OnDataMatrixRead;
                 _controller.ErrorOccurred -= OnErrorOccurred;
-                _controller.FrameReceived -= null;
 
                 _controller.Stop();
                 _controller.Dispose();
@@ -87,6 +88,7 @@ namespace WpfApp1_IC.Pages
             Dispatcher.Invoke(() =>
             {
                 AppendLog($"Сигнал изменился: {signal}");
+
             });
         }
 
@@ -122,6 +124,31 @@ namespace WpfApp1_IC.Pages
         {
             LogTextBox.AppendText(text + Environment.NewLine);
             LogTextBox.ScrollToEnd();
+        }
+
+        private void SaveFrame(BitmapSource frame)
+        {
+            try
+            {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(frame));
+
+                string path = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    "camera_frame.png"
+                );
+
+                using (var stream = new System.IO.FileStream(path, System.IO.FileMode.Create))
+                {
+                    encoder.Save(stream);
+                }
+
+                AppendLog("📁 Кадр сохранён: camera_frame.png");
+            }
+            catch (Exception ex)
+            {
+                AppendLog("❌ Ошибка сохранения кадра: " + ex.Message);
+            }
         }
     }
 }
