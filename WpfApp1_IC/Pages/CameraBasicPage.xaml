@@ -9,7 +9,7 @@
             <!-- Панель кнопок -->
             <RowDefinition Height="Auto"/>
             <!-- Строка DataMatrix -->
-            <RowDefinition Height="300"/>
+            <RowDefinition x:Name="ImageRow" Height="300"/>
             <!-- Изображение -->
             <RowDefinition Height="*"/>
             <!-- Лог -->

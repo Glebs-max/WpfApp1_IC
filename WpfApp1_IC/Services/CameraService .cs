@@ -65,14 +65,27 @@ namespace WpfApp1_IC.Services
 
                 info = Marshal.PtrToStructure<MvCodeReader.MV_CODEREADER_IMAGE_OUT_INFO>(pInfo);
 
-                System.Diagnostics.Debug.WriteLine("PixelFormat: " + info.enPixelType);
+                //System.Diagnostics.Debug.WriteLine("PixelFormat: " + info.enPixelType);  //Вывод формата изображения далее надо будет удалить 
 
                 BitmapSource frame = GetLastFrameBitmap(pData, info);
 
+                // Если код не найден вообще
                 if (!info.bIsGetCode || info.chResult == null)
                     return (null, frame);
 
+                //Если найден но пустой (служебные байты)
+                if (info.chResult.Length <= 8)
+                {
+                    Console.WriteLine("Код найден, но пустой или повреждён");
+                    return (null, frame);
+                }
+
                 var dm = ExtractDM(info.chResult);
+
+                // Если строка пустая — тоже считаем, что кода нет
+                if (dm == null || string.IsNullOrWhiteSpace(dm.Normalized)) 
+                    return (null, frame); 
+
                 return (dm, frame);
             }
             finally

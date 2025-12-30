@@ -114,11 +114,18 @@ namespace WpfApp1_IC.Pages
 
         private void ToggleImage_Click(object sender, RoutedEventArgs e)
         {
-            CameraImage.Visibility =
-                CameraImage.Visibility == Visibility.Visible
-                ? Visibility.Collapsed
-                : Visibility.Visible;
+            if (CameraImage.Visibility == Visibility.Visible)
+            {
+                CameraImage.Visibility = Visibility.Collapsed;
+                ImageRow.Height = new GridLength(0); // скрыть строку
+            }
+            else
+            {
+                CameraImage.Visibility = Visibility.Visible;
+                ImageRow.Height = new GridLength(300); // вернуть высоту
+            }
         }
+
 
         private void AppendLog(string text)
         {
