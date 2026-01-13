@@ -15,6 +15,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\logo.png" />
+    <None Remove="Assets\Start.png" />
+    <None Remove="Assets\Stop.png" />
+    <None Remove="Assets\toggle_close.png" />
+    <None Remove="Assets\toggle_open.png" />
+  </ItemGroup>
+
   <!-- NuGet пакеты -->
   <ItemGroup>
     <PackageReference Include="EasyModbusTCP" Version="5.6.0" />
@@ -31,6 +39,13 @@
     <Reference Include="MvCodeReaderCtrlWrapper">
       <HintPath>lib\MvCodeReaderCtrlWrapper.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\Start.png" />
+    <Resource Include="Assets\Stop.png" />
+    <Resource Include="Assets\toggle_close.png" />
+    <Resource Include="Assets\toggle_open.png" />
   </ItemGroup>
 
   <!-- Копирование всех файлов из lib в bin -->

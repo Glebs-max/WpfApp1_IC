@@ -6,7 +6,7 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Панель кнопок -->
+            <!-- Верхняя оранжевая панель -->
             <RowDefinition Height="Auto"/>
             <!-- Строка DataMatrix -->
             <RowDefinition x:Name="ImageRow" Height="300"/>
@@ -15,12 +15,62 @@
             <!-- Лог -->
         </Grid.RowDefinitions>
 
-        <!-- Панель кнопок -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
-            <Button Content="Старт" Width="80" Margin="0,0,10,0" Click="Start_Click"/>
-            <Button Content="Стоп" Width="80" Margin="0,0,10,0" Click="Stop_Click"/>
-            <Button Content="Показать/Скрыть изображение" Width="200" Click="ToggleImage_Click"/>
-        </StackPanel>
+
+        <!-- 🔶 ВЕРХНЯЯ ОРАНЖЕВАЯ ПАНЕЛЬ -->
+        <Border Grid.Row="0"
+                Background="#FFEB8A00"
+                Height="60"
+                CornerRadius="4"
+                Padding="10"
+                Margin="0,0,0,10">
+            <DockPanel LastChildFill="False">
+
+                <!-- ЛОГОТИП -->
+                <Image Source="/Assets/logo.png"
+                       Height="40"
+                       Width="40"
+                       Stretch="Uniform"
+                       DockPanel.Dock="Left"
+                       Margin="0,0,20,0"/>
+
+                <!-- КНОПКИ-ИКОНКИ -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                            Margin="0, 0, 15, 0">
+
+                    <!-- Старт/Стоп -->
+                    <Button x:Name="StartStopButton"
+                            Width="50" Height="50"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip="Старт"
+                            Click="StartStop_Click">
+                        <Image x:Name="StartStopIcon"
+                               Source="/../Assets/Start.png"
+                               Stretch="Uniform"/>
+                    </Button>
+
+
+                    <!-- Показать/Скрыть изображение -->
+                    <Button x:Name="ToggleImageButton"
+                            Width="50" Height="50"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip="Показать/Скрыть изображение"
+                            Click="ToggleImage_Click">
+                        <Image x:Name="ToggleImageIcon"
+                               Source="/Assets/toggle_close.png"
+                               Stretch="Uniform"/>
+                    </Button>
+
+
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+
 
         <!-- Строка DataMatrix -->
         <TextBox x:Name="DmTextBox"
@@ -32,6 +82,7 @@
                  Background="#FFF9F9F9"
                  Margin="0,0,0,10"/>
 
+
         <!-- Изображение -->
         <Border Grid.Row="2"
                 BorderBrush="#CCC"
@@ -41,6 +92,7 @@
                    Stretch="Uniform"
                    Visibility="Visible"/>
         </Border>
+
 
         <!-- Лог -->
         <TextBox x:Name="LogTextBox"

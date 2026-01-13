@@ -9,6 +9,7 @@ namespace WpfApp1_IC.Pages
     public partial class CameraBasicPage : Page
     {
         private InspectorController _controller;
+        private bool _isRunning = false;
 
         public CameraBasicPage()
         {
@@ -116,15 +117,24 @@ namespace WpfApp1_IC.Pages
         {
             if (CameraImage.Visibility == Visibility.Visible)
             {
+                // Скрываем изображение
                 CameraImage.Visibility = Visibility.Collapsed;
-                ImageRow.Height = new GridLength(0); // скрыть строку
+                ImageRow.Height = new GridLength(0);
+
+                // Меняем иконку на "показать"
+                ToggleImageIcon.Source = new BitmapImage(new Uri("/Assets/toggle_open.png", UriKind.Relative));
             }
             else
             {
+                // Показываем изображение
                 CameraImage.Visibility = Visibility.Visible;
-                ImageRow.Height = new GridLength(300); // вернуть высоту
+                ImageRow.Height = new GridLength(300);
+
+                // Меняем иконку на "скрыть"
+                ToggleImageIcon.Source = new BitmapImage(new Uri("/Assets/toggle_close.png", UriKind.Relative));
             }
         }
+
 
 
         private void AppendLog(string text)
@@ -157,5 +167,25 @@ namespace WpfApp1_IC.Pages
                 AppendLog("❌ Ошибка сохранения кадра: " + ex.Message);
             }
         }
+
+
+        private void StartStop_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isRunning)
+            {
+                Start_Click(sender, e);
+                _isRunning = true;
+                StartStopIcon.Source = new BitmapImage(new Uri("/Assets/stop.png", UriKind.Relative));
+                StartStopButton.ToolTip = "Стоп";
+            }
+            else
+            {
+                Stop_Click(sender, e);
+                _isRunning = false;
+                StartStopIcon.Source = new BitmapImage(new Uri("/Assets/start.png", UriKind.Relative));
+                StartStopButton.ToolTip = "Старт";
+            }
+        }
+
     }
 }
