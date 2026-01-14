@@ -1,24 +1,118 @@
 ﻿<Window x:Class="WpfApp1_IC.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1_IC"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="700" Width="1200">
+
     <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/> <!-- Верхняя панель -->
+            <RowDefinition Height="*"/> <!-- Основная область -->
+        </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition x:Name="LeftColumn" Width="200"/> <!-- Левое меню -->
+            <ColumnDefinition Width="*"/> <!-- Контент -->
         </Grid.ColumnDefinitions>
-        <!-- Левая панель с кнопками -->
-        <Border Grid.Column="0" Background="#EEE" Padding="10">
-            <StackPanel>
-                <Button Content="Камера - базовый режим" Margin="0,0,0,10" Click="CameraBasic_Click"/>
-                <Button Content="Камера - расширенный режим" Margin="0,0,0,10" Click="CameraAdvanced_Click"/>
-            </StackPanel>
+
+        <!--  ВЕРХНЯЯ ПАНЕЛЬ -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#FF6D00" Height="60">
+            <DockPanel LastChildFill="True" VerticalAlignment="Center" Margin="10,0">
+
+                <!-- Логотип -->
+                <Button DockPanel.Dock="Left"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="Главная"
+                        Click="GoHome_Click"
+                        Focusable="False">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Style>
+                    </Button.Style>
+                    <Image Source="Assets/logo.png"
+                           Height="60"
+                           Width="63"
+                           DockPanel.Dock="Left"
+                           Margin="0,0,15,0"/>
+                </Button>
+
+                <!-- Путь -->
+                <TextBlock x:Name="PathText"
+                           Text="Главная"
+                           FontSize="20"
+                           VerticalAlignment="Center"
+                           Foreground="White"/>
+
+                <!-- Кнопки справа -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0">
+                    <Button Width="40" Height="40" Background="Firebrick" BorderThickness="0">
+                        <!--<Image Source="Assets/back.png"/>-->
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="BlueViolet" BorderThickness="0">
+                        <!--<Image Source="Assets/forward.png"/>-->
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="Olive" BorderThickness="0">
+                        <!--<Image Source="Assets/settings.png"/>-->
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="Red"  BorderThickness="0">
+                        <!--<Image Source="Assets/info.png"/>-->
+                    </Button>
+                </StackPanel>
+            </DockPanel>
         </Border>
-        <!-- Правая часть — место для страниц -->
-        <Frame x:Name="MainFrame" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+
+        <!--  ЛЕВОЕ МЕНЮ -->
+        <Border Grid.Row="1" Grid.Column="0" Background="#A9A9A9" Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"/> <!-- Кнопка меню -->
+                    <RowDefinition Height="*"/>
+                    <!-- Кнопки страниц -->
+                </Grid.RowDefinitions>
+                <!-- Кнопка МЕНЮ (всегда видима) -->
+                <Button x:Name="MenuButton" Grid.Row="0" Background="Transparent" BorderThickness="0" Click="MenuButton_Click" HorizontalContentAlignment="Left" Padding="10,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Иконка гамбургера -->
+                        <Canvas Width="24" Height="24">
+                            <Rectangle Fill="White" Width="20" Height="2" Canvas.Top="4"/>
+                            <Rectangle Fill="White" Width="20" Height="2" Canvas.Top="10"/>
+                            <Rectangle Fill="White" Width="20" Height="2" Canvas.Top="16"/>
+                        </Canvas>
+                        <!-- Текст МЕНЮ (будем скрывать/показывать) -->
+                        <TextBlock x:Name="MenuText" Text="МЕНЮ" Foreground="White" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <!-- ОБЛАСТЬ КНОПОК МЕНЮ (скрывается/показывается) -->
+                <StackPanel x:Name="MenuItemsPanel" Grid.Row="1" Margin="10,10,10,10">
+                    <Button Content="Камера - базовый режим" Margin="0,0,0,10" Click="CameraBasic_Click"/>
+                    <Button Content="Камера - расширенный режим" Margin="0,0,0,10" Click="CameraAdvanced_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ОБЛАСТЬ СТРАНИЦ -->
+        <Frame x:Name="MainFrame"
+               Grid.Row="1"
+               Grid.Column="1"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

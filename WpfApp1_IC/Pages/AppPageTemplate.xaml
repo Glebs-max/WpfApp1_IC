@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="WpfApp1_IC.Pages.AppPageTemplate"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!-- Верхняя панель -->
+            <RowDefinition Height="*"/>
+            <!-- Контент -->
+            <RowDefinition Height="120"/>
+            <!-- Лог -->
+        </Grid.RowDefinitions>
+
+        <!-- 🔶 Верхняя панель -->
+        <Border Grid.Row="0" Background="#FFEB8A00">
+            <DockPanel Margin="10,0">
+
+                <!-- Логотип -->
+                <Image Source="Assets/logo.png"
+                       Height="40"
+                       Width="40"
+                       DockPanel.Dock="Left"
+                       Margin="0,0,20,0"/>
+
+                <!-- Путь -->
+                <TextBlock x:Name="PagePath"
+                           Text="Главная"
+                           FontSize="20"
+                           VerticalAlignment="Center"
+                           Foreground="White"/>
+
+                <!-- Кнопки справа -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center">
+
+                    <Button Width="40" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Назад">
+                        <Image Source="Assets/back.png"/>
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Вперёд">
+                        <Image Source="Assets/forward.png"/>
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Настройки">
+                        <Image Source="Assets/settings.png"/>
+                    </Button>
+
+                    <Button Width="40" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Информация">
+                        <Image Source="Assets/info.png"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- 🔷 Контент -->
+        <ContentPresenter Grid.Row="1"
+                          Margin="10"
+                          Content="{Binding ElementName=Root, Path=Content}"/>
+
+        <!-- 🔻 Лог -->
+        <Border Grid.Row="2" Background="#1E1E1E">
+            <TextBox x:Name="LogTextBox"
+                     IsReadOnly="True"
+                     Foreground="LightGreen"
+                     Background="Transparent"
+                     FontSize="14"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="10"/>
+        </Border>
+    </Grid>
+</UserControl>

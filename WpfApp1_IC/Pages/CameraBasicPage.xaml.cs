@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WpfApp1_IC.Services;
 
@@ -14,9 +15,42 @@ namespace WpfApp1_IC.Pages
         public CameraBasicPage()
         {
             InitializeComponent();
+
+            ShowImageCheck.IsChecked = true;
+            ShowLogCheck.IsChecked = true;
         }
 
-        private void Start_Click(object sender, RoutedEventArgs e)
+        //Старт / Стоп
+        private void StartStop_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+
+            if (!_isRunning)
+            {
+                StartController();
+                _isRunning = true;
+
+                // Иконка "Стоп"
+                StartStopIcon.Data = Geometry.Parse("M 0 0 H 6 V 20 H 0 Z M 10 0 H 16 V 20 H 10 Z");
+                StartStopIcon.Fill = Brushes.Red;
+
+                button.ToolTip = "Стоп";
+            }
+            else
+            {
+                StopController();
+                _isRunning = false;
+
+                // Иконка "Старт"
+                StartStopIcon.Data = Geometry.Parse("M 0 0 L 0 20 L 17 10 Z");
+                StartStopIcon.Fill = Brushes.Green;
+
+                button.ToolTip = "Старт";
+            }
+        }
+
+
+        private void StartController()
         {
             try
             {
@@ -28,21 +62,11 @@ namespace WpfApp1_IC.Pages
 
                 _controller = new InspectorController(modbus, camera);
 
-                // Подписки
-                _controller.SignalChanged += OnSignalChanged;
-                _controller.DataMatrixRead += OnDataMatrixRead;
-                _controller.ErrorOccurred += OnErrorOccurred;
-
-                // Обновление строки DM
                 _controller.DataMatrixRead += dm =>
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        DmTextBox.Text = dm.Normalized;
-                    });
+                    Dispatcher.Invoke(() => DmTextBox.Text = dm.Normalized);
                 };
 
-                // Обновление изображения
                 _controller.FrameReceived += frame =>
                 {
                     Dispatcher.Invoke(() =>
@@ -50,142 +74,103 @@ namespace WpfApp1_IC.Pages
                         if (frame != null)
                         {
                             CameraImage.Source = frame;
-                            AppendLog("Кадр обновлён");
+                            Log("Изображение обновлено");
                         }
                         else
                         {
-                            AppendLog("⚠ Изображение не получено");
+                            Log("Изображение не получено");
                         }
                     });
                 };
 
+                _controller.ErrorOccurred += err =>
+                {
+                    Dispatcher.Invoke(() => Log("Ошибка: " + err));
+                };
+
+                _controller.SignalChanged += s =>
+                {
+                    Dispatcher.Invoke(() => Log($"Сигнал: {s}"));
+                };
+
                 _controller.Start();
-                AppendLog("Контроллер запущен");
+                Log("Контроллер запущен");
             }
             catch (Exception ex)
             {
-                AppendLog("Ошибка при запуске: " + ex.Message);
+                Log("Ошибка при запуске: " + ex.Message);
             }
         }
 
-        private void Stop_Click(object sender, RoutedEventArgs e)
+        private void StopController()
         {
             if (_controller != null)
             {
-                _controller.SignalChanged -= OnSignalChanged;
-                _controller.DataMatrixRead -= OnDataMatrixRead;
-                _controller.ErrorOccurred -= OnErrorOccurred;
-
                 _controller.Stop();
                 _controller.Dispose();
                 _controller = null;
-
-                AppendLog("Контроллер остановлен");
+                Log("Контроллер остановлен");
             }
         }
 
-        private void OnSignalChanged(int signal)
+        // Показать / скрыть изображение
+        private void ShowImageCheck_Changed(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                AppendLog($"Сигнал изменился: {signal}");
-
-            });
+            UpdateLayoutVisibility();
         }
 
-        private void OnDataMatrixRead(DataMatrixResult result)
+        // Показать / скрыть лог
+        private void ShowLogCheck_Changed(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                AppendLog("DataMatrix прочитан");
-                AppendLog("RAW:");
-                AppendLog(result.Raw);
-                AppendLog("NORMALIZED:");
-                AppendLog(result.Normalized);
-            });
+            UpdateLayoutVisibility();
         }
 
-        private void OnErrorOccurred(string error)
+        // Логирование
+        private void Log(string message)
         {
-            Dispatcher.Invoke(() =>
-            {
-                AppendLog("Ошибка: " + error);
-            });
-        }
-
-        private void ToggleImage_Click(object sender, RoutedEventArgs e)
-        {
-            if (CameraImage.Visibility == Visibility.Visible)
-            {
-                // Скрываем изображение
-                CameraImage.Visibility = Visibility.Collapsed;
-                ImageRow.Height = new GridLength(0);
-
-                // Меняем иконку на "показать"
-                ToggleImageIcon.Source = new BitmapImage(new Uri("/Assets/toggle_open.png", UriKind.Relative));
-            }
-            else
-            {
-                // Показываем изображение
-                CameraImage.Visibility = Visibility.Visible;
-                ImageRow.Height = new GridLength(300);
-
-                // Меняем иконку на "скрыть"
-                ToggleImageIcon.Source = new BitmapImage(new Uri("/Assets/toggle_close.png", UriKind.Relative));
-            }
-        }
-
-
-
-        private void AppendLog(string text)
-        {
-            LogTextBox.AppendText(text + Environment.NewLine);
+            LogTextBox.AppendText(message + Environment.NewLine);
             LogTextBox.ScrollToEnd();
         }
 
-        private void SaveFrame(BitmapSource frame)
+        private void UpdateLayoutVisibility()
         {
-            try
+            bool showImage = ShowImageCheck.IsChecked == true;
+            bool showLog = ShowLogCheck.IsChecked == true;
+
+            // Скрываем/показываем содержимое
+            CameraImage.Visibility = showImage ? Visibility.Visible : Visibility.Collapsed;
+            LogTextBox.Visibility = showLog ? Visibility.Visible : Visibility.Collapsed;
+
+            // --- ЛОГИКА РАСПРЕДЕЛЕНИЯ ПРОСТРАНСТВА ---
+
+            if (showImage && showLog)
             {
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(frame));
-
-                string path = System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "camera_frame.png"
-                );
-
-                using (var stream = new System.IO.FileStream(path, System.IO.FileMode.Create))
-                {
-                    encoder.Save(stream);
-                }
-
-                AppendLog("📁 Кадр сохранён: camera_frame.png");
+                // Обычный режим
+                ImageRow.Height = new GridLength(3, GridUnitType.Star);
+                LogRow.Height = new GridLength(2, GridUnitType.Star);
             }
-            catch (Exception ex)
+            else if (!showImage && showLog)
             {
-                AppendLog("❌ Ошибка сохранения кадра: " + ex.Message);
+                // Только лог
+                ImageRow.Height = new GridLength(0);
+                LogRow.Height = new GridLength(1, GridUnitType.Star);
             }
-        }
-
-
-        private void StartStop_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_isRunning)
+            else if (showImage && !showLog)
             {
-                Start_Click(sender, e);
-                _isRunning = true;
-                StartStopIcon.Source = new BitmapImage(new Uri("/Assets/stop.png", UriKind.Relative));
-                StartStopButton.ToolTip = "Стоп";
+                // Только изображение
+                ImageRow.Height = new GridLength(1, GridUnitType.Star);
+                LogRow.Height = new GridLength(0);
             }
             else
             {
-                Stop_Click(sender, e);
-                _isRunning = false;
-                StartStopIcon.Source = new BitmapImage(new Uri("/Assets/start.png", UriKind.Relative));
-                StartStopButton.ToolTip = "Старт";
+                // Ни логов, ни изображения
+                ImageRow.Height = new GridLength(0);
+                LogRow.Height = new GridLength(0);
+
+                // Центрируем DataMatrix
+                DmTextBox.VerticalAlignment = VerticalAlignment.Center;
+                //DmTextBox.HorizontalAlignment = HorizontalAlignment.Center;
             }
         }
-
     }
 }
