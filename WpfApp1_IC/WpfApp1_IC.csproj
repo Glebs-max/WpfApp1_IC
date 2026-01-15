@@ -16,7 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\info.png" />
     <None Remove="Assets\logo.png" />
+    <None Remove="Assets\nastr.png" />
+    <None Remove="Assets\Next.png" />
+    <None Remove="Assets\return.png" />
     <None Remove="Assets\Start.png" />
     <None Remove="Assets\Stop.png" />
     <None Remove="Assets\toggle_close.png" />
@@ -41,7 +45,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\info.png" />
     <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\nastr.png" />
+    <Resource Include="Assets\Next.png" />
+    <Resource Include="Assets\return.png" />
     <Resource Include="Assets\Start.png" />
     <Resource Include="Assets\Stop.png" />
     <Resource Include="Assets\toggle_close.png" />

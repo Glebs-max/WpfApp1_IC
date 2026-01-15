@@ -3,16 +3,58 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="700" Width="1200">
 
+    <Window.Resources>
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <ContentPresenter x:Name="content"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+
+                            <!-- Когда кнопка НЕ активна -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="content" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+
+                            <!-- Наведение -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="content" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+
+                            <!-- Нажатие -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="content" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/> <!-- Верхняя панель -->
-            <RowDefinition Height="*"/> <!-- Основная область -->
+            <RowDefinition Height="60"/>
+            <!-- Верхняя панель -->
+            <RowDefinition Height="*"/>
+            <!-- Основная область -->
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="LeftColumn" Width="200"/> <!-- Левое меню -->
-            <ColumnDefinition Width="*"/> <!-- Контент -->
+            <ColumnDefinition x:Name="LeftColumn" Width="200"/>
+            <!-- Левое меню -->
+            <ColumnDefinition Width="*"/>
+            <!-- Контент -->
         </Grid.ColumnDefinitions>
 
         <!--  ВЕРХНЯЯ ПАНЕЛЬ -->
@@ -60,23 +102,49 @@
                             DockPanel.Dock="Right"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Right"
-                            Margin="0,0,10,0">
-                    <Button Width="40" Height="40" Background="Firebrick" BorderThickness="0">
-                        <!--<Image Source="Assets/back.png"/>-->
+                            Background="Transparent"
+                            Margin="0,0,15,0">
+
+                    <!-- НАЗАД  IsEnabled="False" -->
+                    <Button x:Name="BackButton"
+                            Width="40" Height="40"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="BackButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource IconButtonStyle}"    >
+                        <Image Source="/Assets/return.png" Width="40" Height="40"/>
                     </Button>
 
-                    <Button Width="40" Height="40" Background="BlueViolet" BorderThickness="0">
-                        <!--<Image Source="Assets/forward.png"/>-->
+                    <!-- ВПЕРЁД -->
+                    <Button x:Name="ForwardButton"
+                            Width="40" Height="40"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="ForwardButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource IconButtonStyle}" Cursor="Hand">
+                        <Image Source="/Assets/Next.png" Width="40" Height="40"/>
                     </Button>
 
-                    <Button Width="40" Height="40" Background="Olive" BorderThickness="0">
-                        <!--<Image Source="Assets/settings.png"/>-->
+                    <!-- НАСТРОЙКИ -->
+                    <Button Width="40" Height="40"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="SettingsButton_Click">
+                        <Image Source="/Assets/nastr.png" Width="40" Height="40"/>
                     </Button>
 
-                    <Button Width="40" Height="40" Background="Red"  BorderThickness="0">
-                        <!--<Image Source="Assets/info.png"/>-->
+                    <!-- ИНФО -->
+                    <Button Width="40" Height="40"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="HelpButton_Click">
+                        <Image Source="Assets/info.png" Width="40" Height="40"/>
                     </Button>
+
                 </StackPanel>
+
             </DockPanel>
         </Border>
 
@@ -84,7 +152,8 @@
         <Border Grid.Row="1" Grid.Column="0" Background="#A9A9A9" Padding="10">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="35"/> <!-- Кнопка меню -->
+                    <RowDefinition Height="35"/>
+                    <!-- Кнопка меню -->
                     <RowDefinition Height="*"/>
                     <!-- Кнопки страниц -->
                 </Grid.RowDefinitions>
@@ -113,6 +182,7 @@
         <Frame x:Name="MainFrame"
                Grid.Row="1"
                Grid.Column="1"
+               Background="#DCDCDC"
                NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

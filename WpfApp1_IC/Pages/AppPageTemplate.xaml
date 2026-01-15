@@ -13,7 +13,7 @@
             <!-- Лог -->
         </Grid.RowDefinitions>
 
-        <!-- 🔶 Верхняя панель -->
+        <!-- Верхняя панель -->
         <Border Grid.Row="0" Background="#FFEB8A00">
             <DockPanel Margin="10,0">
 
@@ -55,12 +55,12 @@
             </DockPanel>
         </Border>
 
-        <!-- 🔷 Контент -->
+        <!-- Контент -->
         <ContentPresenter Grid.Row="1"
                           Margin="10"
                           Content="{Binding ElementName=Root, Path=Content}"/>
 
-        <!-- 🔻 Лог -->
+        <!-- Лог -->
         <Border Grid.Row="2" Background="#1E1E1E">
             <TextBox x:Name="LogTextBox"
                      IsReadOnly="True"
