@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using WpfApp1_IC.Services;
 
 namespace WpfApp1_IC.Pages
@@ -12,56 +11,52 @@ namespace WpfApp1_IC.Pages
         private InspectorController _controller;
         private bool _isRunning = false;
 
-        public CameraBasicPage()
+        public CameraBasicPage(InspectorController controller = null)
         {
             InitializeComponent();
 
+            // Начальные состояния UI
             ShowImageCheck.IsChecked = true;
             ShowLogCheck.IsChecked = true;
-        }
 
-        //Старт / Стоп
-        private void StartStop_Click(object sender, RoutedEventArgs e)
-        {
-            var button = (Button)sender;
-
-            if (!_isRunning)
+            // Если контроллер передан — используем его
+            if (controller != null)
             {
-                StartController();
-                _isRunning = true;
-
-                // Иконка "Стоп"
-                StartStopIcon.Data = Geometry.Parse("M 0 0 H 6 V 20 H 0 Z M 10 0 H 16 V 20 H 10 Z");
-                StartStopIcon.Fill = Brushes.Red;
-
-                button.ToolTip = "Стоп";
+                _controller = controller;
+                Log("Контроллер передан из HomePage.");
             }
             else
             {
-                StopController();
-                _isRunning = false;
+                // Если контроллера нет — создаём локальный
+                Log("Контроллер не передан. Создаю локальный контроллер...");
 
-                // Иконка "Старт"
-                StartStopIcon.Data = Geometry.Parse("M 0 0 L 0 20 L 17 10 Z");
-                StartStopIcon.Fill = Brushes.Green;
+                var settings = SettingsService.Load();
 
-                button.ToolTip = "Старт";
+                ModbusService modbus = null;
+                CameraService camera = null;
+
+                try
+                {
+                    if (settings.UseModbus)
+                        modbus = new ModbusService(settings.ModbusIp, settings.ModbusPort);
+
+                    if (settings.UseCamera)
+                        camera = new CameraService();
+
+                    _controller = new InspectorController(modbus, camera);
+                    _controller.RejectDelayMs = settings.RejectDelayMs;
+
+                    Log("Локальный контроллер создан. Можно запускать инспекцию.");
+                }
+                catch (Exception ex)
+                {
+                    Log("Ошибка при создании локального контроллера: " + ex.Message);
+                }
             }
-        }
 
-
-        private void StartController()
-        {
-            try
+            // Подписываемся на события (только если контроллер создан)
+            if (_controller != null)
             {
-                var modbus = new ModbusService("192.168.0.127", 502);
-                modbus.Connect();
-
-                var camera = new CameraService();
-                camera.InitCamera();
-
-                _controller = new InspectorController(modbus, camera);
-
                 _controller.DataMatrixRead += dm =>
                 {
                     Dispatcher.Invoke(() => DmTextBox.Text = dm.Normalized);
@@ -92,85 +87,104 @@ namespace WpfApp1_IC.Pages
                 {
                     Dispatcher.Invoke(() => Log($"Сигнал: {s}"));
                 };
-
-                _controller.Start();
-                Log("Контроллер запущен");
             }
-            catch (Exception ex)
+            else
             {
-                Log("Ошибка при запуске: " + ex.Message);
+                Log("Контроллер не создан. Инспекция недоступна.");
             }
+
+            UpdateLayoutVisibility();
         }
 
-        private void StopController()
+        // ===== КНОПКА СТАРТ / СТОП =====
+        private void StartStop_Click(object sender, RoutedEventArgs e)
         {
-            if (_controller != null)
+            if (_controller == null)
+            {
+                Log("Невозможно запустить инспекцию — контроллер отсутствует.");
+                return;
+            }
+
+            var button = (Button)sender;
+            _isRunning = !_isRunning;
+
+            if (_isRunning)
+            {
+                try
+                {
+                    _controller.Start();
+
+                    StartStopIcon.Data = Geometry.Parse("M 0 0 H 6 V 20 H 0 Z M 10 0 H 16 V 20 H 10 Z");
+                    StartStopIcon.Fill = Brushes.Red;
+                    button.ToolTip = "Стоп";
+
+                    Log("Инспекция запущена");
+                }
+                catch (Exception ex)
+                {
+                    Log("Ошибка запуска инспекции: " + ex.Message);
+                }
+            }
+            else
             {
                 _controller.Stop();
-                _controller.Dispose();
-                _controller = null;
-                Log("Контроллер остановлен");
+
+                StartStopIcon.Data = Geometry.Parse("M 0 0 L 0 20 L 17 10 Z");
+                StartStopIcon.Fill = Brushes.Green;
+                button.ToolTip = "Старт";
+
+                Log("Инспекция остановлена");
             }
         }
 
-        // Показать / скрыть изображение
+        // ===== ПОКАЗАТЬ / СКРЫТЬ ИЗОБРАЖЕНИЕ =====
         private void ShowImageCheck_Changed(object sender, RoutedEventArgs e)
         {
             UpdateLayoutVisibility();
         }
 
-        // Показать / скрыть лог
+        // ===== ПОКАЗАТЬ / СКРЫТЬ ЛОГ =====
         private void ShowLogCheck_Changed(object sender, RoutedEventArgs e)
         {
             UpdateLayoutVisibility();
         }
 
-        // Логирование
-        private void Log(string message)
-        {
-            LogTextBox.AppendText(message + Environment.NewLine);
-            LogTextBox.ScrollToEnd();
-        }
-
+        // ===== ОБНОВЛЕНИЕ РАСПОЛОЖЕНИЯ =====
         private void UpdateLayoutVisibility()
         {
             bool showImage = ShowImageCheck.IsChecked == true;
             bool showLog = ShowLogCheck.IsChecked == true;
 
-            // Скрываем/показываем содержимое
             CameraImage.Visibility = showImage ? Visibility.Visible : Visibility.Collapsed;
             LogTextBox.Visibility = showLog ? Visibility.Visible : Visibility.Collapsed;
 
-            // --- ЛОГИКА РАСПРЕДЕЛЕНИЯ ПРОСТРАНСТВА ---
-
             if (showImage && showLog)
             {
-                // Обычный режим
                 ImageRow.Height = new GridLength(3, GridUnitType.Star);
                 LogRow.Height = new GridLength(2, GridUnitType.Star);
             }
-            else if (!showImage && showLog)
-            {
-                // Только лог
-                ImageRow.Height = new GridLength(0);
-                LogRow.Height = new GridLength(1, GridUnitType.Star);
-            }
             else if (showImage && !showLog)
             {
-                // Только изображение
                 ImageRow.Height = new GridLength(1, GridUnitType.Star);
                 LogRow.Height = new GridLength(0);
             }
+            else if (!showImage && showLog)
+            {
+                ImageRow.Height = new GridLength(0);
+                LogRow.Height = new GridLength(1, GridUnitType.Star);
+            }
             else
             {
-                // Ни логов, ни изображения
                 ImageRow.Height = new GridLength(0);
                 LogRow.Height = new GridLength(0);
-
-                // Центрируем DataMatrix
-                DmTextBox.VerticalAlignment = VerticalAlignment.Center;
-                //DmTextBox.HorizontalAlignment = HorizontalAlignment.Center;
             }
+        }
+
+        // ===== ЛОГИРОВАНИЕ =====
+        private void Log(string message)
+        {
+            LogTextBox.AppendText(message + Environment.NewLine);
+            LogTextBox.ScrollToEnd();
         }
     }
 }

@@ -12,6 +12,9 @@ namespace WpfApp1_IC.Services
 
         private CancellationTokenSource _cts;
 
+        // === Настройка задержки отбраковки ===
+        public int RejectDelayMs { get; set; } = 500;
+
         // Фильтр дребезга
         private int _stableSignal = -1;
         private int _previousSignal = -1;
@@ -35,11 +38,22 @@ namespace WpfApp1_IC.Services
 
         public void Start()
         {
+            // Открываем устройство 
+            _camera?.Open();
+            _modbus?.Connect();
+
+            // Сбрасываем состояние перед запуском
+            _stableSignal = -1;
+            _previousSignal = -1;
+            _sameCount = 0;
+            _triggerInProgress = false;
+
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
 
             Task.Run(() => Loop(token), token);
         }
+
 
         private async Task Loop(CancellationToken token)
         {
@@ -60,7 +74,6 @@ namespace WpfApp1_IC.Services
                         _stableSignal = rawSignal;
                     }
 
-                    // Сигнал считается изменившимся только если он стабилен
                     if (_sameCount >= FILTER_COUNT)
                     {
                         if (_stableSignal != _previousSignal)
@@ -75,12 +88,19 @@ namespace WpfApp1_IC.Services
 
                                 var (dm, frame) = _camera.TriggerAndRead();
 
-                                if(frame != null)
+                                if (frame != null)
                                     FrameReceived?.Invoke(frame);
+
                                 if (dm == null)
                                 {
                                     ErrorOccurred?.Invoke("DataMatrix not read, activating rejector");
-                                    _modbus.ActivateRejector();
+
+                                    // === ОТБРАКОВКА С ЗАДЕРЖКОЙ ===
+                                    _ = Task.Run(async () =>
+                                    {
+                                        await Task.Delay(RejectDelayMs);
+                                        _modbus.ActivateRejector();
+                                    });
                                 }
                                 else
                                 {
@@ -88,7 +108,6 @@ namespace WpfApp1_IC.Services
                                 }
                             }
 
-                            // Когда сигнал вернулся в 0 — разрешаем следующий триггер
                             if (_stableSignal == 0)
                             {
                                 _triggerInProgress = false;
@@ -108,6 +127,9 @@ namespace WpfApp1_IC.Services
         public void Stop()
         {
             _cts?.Cancel();
+
+            _camera.Close();
+            _modbus?.Disconnect();
         }
 
         public void Dispose()

@@ -1,43 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyModbus;
+﻿using EasyModbus;
+using System;
 
 namespace WpfApp1_IC.Services
 {
     public class ModbusService : IDisposable
     {
-        private readonly ModbusClient _client;
+        private ModbusClient _client;
+        private readonly string _ip;
+        private readonly int _port;
 
-        public ModbusService(string ipAddress, int port)
+        public ModbusService(string ip, int port)
         {
-            _client = new ModbusClient(ipAddress, port);
+            _ip = ip;
+            _port = port;
         }
 
+        // Подключение
         public void Connect()
         {
-            _client.Connect();
+            if (_client != null && _client.Connected)
+                return;
+
+            _client = new ModbusClient(_ip, _port);
+
+            try
+            {
+                _client.Connect();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Modbus connection failed: " + ex.Message);
+            }
         }
 
+        // Отключение
+        public void Disconnect()
+        {
+            try
+            {
+                if (_client != null && _client.Connected)
+                    _client.Disconnect();
+            }
+            catch { }
+
+            _client = null;
+        }
+
+        // Чтение сигнала
         public int ReadSignal()
         {
-            int[] values = _client.ReadHoldingRegisters(0, 1);
-            return values[0];
+            if (_client == null || !_client.Connected)
+                throw new Exception("Modbus not connected");
+
+            try
+            {
+                bool[] coils = _client.ReadCoils(0, 1);
+                return coils[0] ? 1 : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Modbus read failed: " + ex.Message);
+            }
         }
 
-        public void ActivateRejector(int durationMs = 500)
+        // Активация отбраковщика
+        public void ActivateRejector()
         {
-            _client.WriteSingleCoil(0, true);
-            System.Threading.Thread.Sleep(durationMs);
-            _client.WriteSingleCoil(0, false);
+            if (_client == null || !_client.Connected)
+                return;
+
+            try
+            {
+                _client.WriteSingleCoil(0, true);
+                System.Threading.Thread.Sleep(300);
+                _client.WriteSingleCoil(0, false);
+            }
+            catch { }
         }
 
         public void Dispose()
         {
-            if (_client.Connected)
-                _client.Disconnect();
+            Disconnect();
         }
     }
 }

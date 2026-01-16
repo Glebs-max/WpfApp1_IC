@@ -13,11 +13,11 @@
                     <ControlTemplate TargetType="Button">
                         <Grid>
                             <ContentPresenter x:Name="content"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
-
+                            
                             <!-- Когда кнопка НЕ активна -->
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="content" Property="Opacity" Value="0.35"/>
@@ -103,7 +103,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Right"
                             Background="Transparent"
-                            Margin="0,0,15,0">
+                            Margin="0,0,20,0">
 
                     <!-- НАЗАД  IsEnabled="False" -->
                     <Button x:Name="BackButton"
@@ -136,11 +136,11 @@
                     </Button>
 
                     <!-- ИНФО -->
-                    <Button Width="40" Height="40"
+                    <Button Width="41" Height="40"
                             Background="Transparent"
                             BorderThickness="0"
                             Click="HelpButton_Click">
-                        <Image Source="Assets/info.png" Width="40" Height="40"/>
+                        <Image Source="Assets/info.png" Width="39" Height="39"/>
                     </Button>
 
                 </StackPanel>

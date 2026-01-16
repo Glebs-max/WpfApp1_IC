@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace WpfApp1_IC.Services
@@ -17,9 +16,16 @@ namespace WpfApp1_IC.Services
     public class CameraService : IDisposable
     {
         private MvCodeReader _reader;
+        private bool _isOpened = false;
 
-        public void InitCamera()
+        // ================================
+        // 1. ОТКРЫТИЕ КАМЕРЫ (вместо InitCamera)
+        // ================================
+        public void Open()
         {
+            if (_isOpened)
+                return;
+
             var list = new MvCodeReader.MV_CODEREADER_DEVICE_INFO_LIST
             {
                 pDeviceInfo = new IntPtr[MvCodeReader.MV_CODEREADER_MAX_DEVICE_NUM]
@@ -44,12 +50,37 @@ namespace WpfApp1_IC.Services
             _reader.MV_CODEREADER_SetEnumValueByString_NET("CodeType", "DataMatrix");
 
             _reader.MV_CODEREADER_StartGrabbing_NET();
+
+            _isOpened = true;
         }
 
+        // ================================
+        // 2. ЗАКРЫТИЕ КАМЕРЫ
+        // ================================
+        public void Close()
+        {
+            if (!_isOpened)
+                return;
+
+            try
+            {
+                _reader.MV_CODEREADER_StopGrabbing_NET();
+                _reader.MV_CODEREADER_CloseDevice_NET();
+                _reader.MV_CODEREADER_DestroyHandle_NET();
+            }
+            catch { }
+
+            _reader = null;
+            _isOpened = false;
+        }
+
+        // ================================
+        // 3. ТРИГГЕР И ЧТЕНИЕ КАДРА
+        // ================================
         public (DataMatrixResult dm, BitmapSource frame) TriggerAndRead()
         {
-            if (_reader == null)
-                throw new InvalidOperationException("Camera not initialized");
+            if (!_isOpened || _reader == null)
+                throw new InvalidOperationException("Camera not opened");
 
             _reader.MV_CODEREADER_SetCommandValue_NET("TriggerSoftware");
 
@@ -65,26 +96,18 @@ namespace WpfApp1_IC.Services
 
                 info = Marshal.PtrToStructure<MvCodeReader.MV_CODEREADER_IMAGE_OUT_INFO>(pInfo);
 
-                //System.Diagnostics.Debug.WriteLine("PixelFormat: " + info.enPixelType);  //Вывод формата изображения далее надо будет удалить 
-
                 BitmapSource frame = GetLastFrameBitmap(pData, info);
 
-                // Если код не найден вообще
                 if (!info.bIsGetCode || info.chResult == null)
                     return (null, frame);
 
-                //Если найден но пустой (служебные байты)
                 if (info.chResult.Length <= 8)
-                {
-                    Console.WriteLine("Код найден, но пустой или повреждён");
                     return (null, frame);
-                }
 
                 var dm = ExtractDM(info.chResult);
 
-                // Если строка пустая — тоже считаем, что кода нет
-                if (dm == null || string.IsNullOrWhiteSpace(dm.Normalized)) 
-                    return (null, frame); 
+                if (dm == null || string.IsNullOrWhiteSpace(dm.Normalized))
+                    return (null, frame);
 
                 return (dm, frame);
             }
@@ -94,6 +117,9 @@ namespace WpfApp1_IC.Services
             }
         }
 
+        // ================================
+        // 4. ПАРСИНГ DM
+        // ================================
         private DataMatrixResult ExtractDM(byte[] data)
         {
             if (data == null || data.Length < 9)
@@ -114,17 +140,16 @@ namespace WpfApp1_IC.Services
             };
         }
 
-        // получение Raw кадра 
+        // ================================
+        // 5. ПОЛУЧЕНИЕ КАДРА
+        // ================================
         public BitmapSource GetLastFrameBitmap(IntPtr pData, MvCodeReader.MV_CODEREADER_IMAGE_OUT_INFO info)
         {
-            // JPEG поток
             int jpegSize = (int)info.nFrameLen;
             byte[] jpegData = new byte[jpegSize];
 
-            // копируем JPEG из unmanaged памяти
             Marshal.Copy(pData, jpegData, 0, jpegSize);
 
-            // декодируем JPEG
             using (var ms = new MemoryStream(jpegData))
             {
                 var decoder = new JpegBitmapDecoder(
@@ -133,21 +158,17 @@ namespace WpfApp1_IC.Services
                     BitmapCacheOption.OnLoad);
 
                 BitmapSource bmp = decoder.Frames[0];
-                bmp.Freeze(); // обязательно
+                bmp.Freeze();
                 return bmp;
             }
         }
 
-
+        // ================================
+        // 6. Dispose
+        // ================================
         public void Dispose()
         {
-            if (_reader != null)
-            {
-                _reader.MV_CODEREADER_StopGrabbing_NET();
-                _reader.MV_CODEREADER_CloseDevice_NET();
-                _reader.MV_CODEREADER_DestroyHandle_NET();
-                _reader = null;
-            }
+            Close();
         }
     }
 }

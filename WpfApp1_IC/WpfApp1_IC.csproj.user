@@ -5,7 +5,13 @@
     <Compile Update="Pages\AppPageTemplate.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Pages\CameraAdvancedPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Pages\CameraBasicPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\HomePage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Pages\SettingsPage.xaml.cs">

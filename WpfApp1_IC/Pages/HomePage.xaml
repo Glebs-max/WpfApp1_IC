@@ -1,0 +1,28 @@
+﻿<Page x:Class="WpfApp1_IC.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Главная">
+
+    <Border Padding="20" Background="#DCDCDC" Cursor="">
+        <Grid>
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <Button Content="Старт"
+                    Width="250"
+                    Height="50"
+                    FontSize="18"
+                    Margin="0,0,0,20"
+                    Click="StartInspection_Click"/>
+
+                <Button Content="Настройки"
+                    Width="250"
+                    Height="50"
+                    FontSize="18"
+                    Click="OpenSettings_Click"/>
+
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</Page>
