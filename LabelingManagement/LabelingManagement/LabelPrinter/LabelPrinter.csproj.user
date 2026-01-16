@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="DataInput.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="LabelPreview.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ParameterInput.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Products.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

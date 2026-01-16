@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="LabelDesigner.DesignerToolbox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LabelDesigner"
+             Background="#EEE">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="Toolbox" Margin="6">
+            <local:IconTextButton Icon="/Icons/TextField.png" Text="Text" Tag="Text" Margin="4"/>
+            <local:IconTextButton Icon="/Icons/ImageField.png" Text="Image" Tag="Image" Margin="4"/>
+            <local:IconTextButton Icon="/Icons/DateField.png" Text="Date" Tag="Date" Margin="4"/>
+            <local:IconTextButton Icon="/Icons/TimeField.png" Text="Time" Tag="Time" Margin="4"/>
+            <local:IconTextButton Icon="/Icons/BarcodeField.png" Text="Barcode" Tag="Barcode" Margin="4"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

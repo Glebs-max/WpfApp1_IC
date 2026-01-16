@@ -1,0 +1,20 @@
+﻿LabelDesigner
+1.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\dvornikov.ga\Documents\Честный знак\LabelingManagement\LabelingManagement\LabelDesigner\obj\Debug\net9.0-windows\
+LabelDesigner
+none
+false
+TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\dvornikov.ga\Documents\Честный знак\LabelingManagement\LabelingManagement\LabelDesigner\App.xaml
+15-313915471
+7450808030
+48-260285192
+209-2090941585
+BarcodeProperties.xaml;DataTypeProperties.xaml;DateProperties.xaml;DesignerCanvas.xaml;DesignerExplorer.xaml;DesignerToolbox.xaml;GeneralProperties.xaml;ImageProperties.xaml;LabelAreaProperties.xaml;MainWindow.xaml;PrintDialog.xaml;PropertiesPanel.xaml;TextProperties.xaml;Themes\Generic.xaml;TimeProperties.xaml;
+
+False
+

@@ -1,0 +1,22 @@
+﻿<Window x:Class="LabelPrinter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LabelPrinter"
+        xmlns:vm="clr-namespace:LabelPrinter.ViewModels"
+        xmlns:designer="clr-namespace:LabelDesigner;assembly=LabelDesigner"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        mc:Ignorable="d" Title="MainWindow" FontFamily="Bahnschrift" FontSize="17"
+        Height="720" Width="1280">
+    <ContentPresenter Content="{Binding CurrentViewModel}">
+        <ContentPresenter.Resources>
+            <DataTemplate DataType="{x:Type vm:ProductsViewModel}">
+                <local:Products/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LabelPreviewViewModel}">
+                <local:LabelPreview/>
+            </DataTemplate>
+        </ContentPresenter.Resources>
+    </ContentPresenter>
+</Window>

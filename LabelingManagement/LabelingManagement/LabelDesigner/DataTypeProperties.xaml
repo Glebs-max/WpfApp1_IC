@@ -1,0 +1,57 @@
+﻿<local:Properties x:Class="LabelDesigner.DataTypeProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LabelDesigner"
+             xmlns:models="clr-namespace:LabelDesigner.Models"
+             d:DataContext="{d:DesignInstance Type=models:FieldModel}"
+             mc:Ignorable="d" Background="#F4F4F4">
+    <StackPanel>
+        <Label Content="Параметры данных" HorizontalContentAlignment="Center"/>
+        <Separator/>
+        <StackPanel Orientation="Vertical" Margin="4">
+            <TextBlock Text="Data Type"/>
+            <ContentPresenter Content="{Binding}">
+                <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type models:TextFieldModel}">
+                        <ComboBox x:Name="DataTypeBox" SelectedValue="{Binding DataType}" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Fixed"/>
+                            <ComboBoxItem Content="Input"/>
+                        </ComboBox>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:ImageFieldModel}">
+                        <ComboBox x:Name="DataTypeBox" SelectedValue="{Binding DataType}" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Fixed"/>
+                            <ComboBoxItem Content="Input"/>
+                        </ComboBox>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:BarcodeFieldModel}">
+                        <ComboBox x:Name="DataTypeBox" SelectedValue="{Binding DataType}" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Fixed"/>
+                            <ComboBoxItem Content="Input"/>
+                            <ComboBoxItem Content="Database"/>
+                        </ComboBox>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:DateFieldModel}">
+                        <ComboBox x:Name="DataTypeBox" SelectedValue="{Binding DataType}" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Fixed"/>
+                            <ComboBoxItem Content="Input"/>
+                            <ComboBoxItem Content="Current"/>
+                            <ComboBoxItem Content="Calculated"/>
+                        </ComboBox>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:TimeFieldModel}">
+                        <ComboBox x:Name="DataTypeBox" SelectedValue="{Binding DataType}" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Current"/>
+                        </ComboBox>
+                    </DataTemplate>
+                </ContentPresenter.Resources>
+            </ContentPresenter>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="4">
+            <TextBlock Text="Field Name"/>
+            <TextBox Text="{Binding FieldName}"/>
+        </StackPanel>
+    </StackPanel>
+</local:Properties>

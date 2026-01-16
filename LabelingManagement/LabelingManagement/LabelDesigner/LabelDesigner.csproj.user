@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="BarcodeProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DataTypeProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DateProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DesignerCanvas.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DesignerExplorer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DesignerToolbox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="GeneralProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ImageProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="LabelAreaProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PrintDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PropertiesPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="TextProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="TimeProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,20 @@
+﻿LabelPrinter
+1.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\dvornikov.ga\Documents\Честный знак\LabelingManagement\LabelingManagement\LabelPrinter\obj\Debug\net9.0-windows\
+LabelPrinter
+none
+false
+TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\dvornikov.ga\Documents\Честный знак\LabelingManagement\LabelingManagement\LabelPrinter\App.xaml
+6375918009
+11413424753
+34-762525955
+261-1245427369
+DataInput.xaml;LabelPreview.xaml;MainWindow.xaml;ParameterInput.xaml;Products.xaml;Themes\Generic.xaml;
+
+False
+

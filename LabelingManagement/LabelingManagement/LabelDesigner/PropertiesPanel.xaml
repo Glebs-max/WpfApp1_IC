@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="LabelDesigner.PropertiesPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LabelDesigner"
+             xmlns:models="clr-namespace:LabelDesigner.Models"
+             d:DataContext="{d:DesignInstance Type=local:DesignerViewModel}"
+             mc:Ignorable="d" Background="#F4F4F4">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label HorizontalAlignment="Stretch" Content="Свойства" Margin="0,0,0,7"/>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1">
+            <ContentPresenter Content="{Binding PropertiesTarget}">
+                <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type models:TextFieldModel}">
+                        <StackPanel>
+                            <local:DataTypeProperties/>
+                            <local:TextProperties/>
+                            <local:GeneralProperties/>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:ImageFieldModel}">
+                        <StackPanel>
+                            <local:DataTypeProperties/>
+                            <local:ImageProperties/>
+                            <local:GeneralProperties/>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:DateFieldModel}">
+                        <StackPanel>
+                            <local:DataTypeProperties/>
+                            <local:DateProperties/>
+                            <local:TextProperties/>
+                            <local:GeneralProperties/>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:TimeFieldModel}">
+                        <StackPanel>
+                            <local:DataTypeProperties/>
+                            <local:TimeProperties/>
+                            <local:TextProperties/>
+                            <local:GeneralProperties/>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:BarcodeFieldModel}">
+                        <StackPanel>
+                            <local:DataTypeProperties/>
+                            <local:BarcodeProperties/>
+                            <local:GeneralProperties/>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type models:LabelAreaModel}">
+                        <local:LabelAreaProperties/>
+                    </DataTemplate>
+                </ContentPresenter.Resources>
+            </ContentPresenter>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
